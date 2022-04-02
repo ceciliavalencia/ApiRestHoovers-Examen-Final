@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiRestHoovers.Models;
 using ApiRestHoovers.Services;
+using System.Text.Json;
 
 namespace ApiRestHoovers.Controllers
 {
@@ -25,8 +26,22 @@ namespace ApiRestHoovers.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Viaje>>> GetViajes()
         {
+            _context.Bitacoras.Add(new Bitacora
+            {
+                IdMetodo = 1
+                      ,
+                IdModulo = 3
+                      ,
+                //CJSON vacio porque no se almacena ningun json, se dejo de esta forma por uso de OpenJson en consulta para reporte
+                Cjson = "{}"
+
+            }
+                  );
+            _context.SaveChanges();
+
+           
             return await _context.Viajes.ToListAsync();
-        }
+        }  
 
         // PUT: api/Viajes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -42,7 +57,28 @@ namespace ApiRestHoovers.Controllers
 
             try
             {
+                string serializejson = JsonSerializer.Serialize(viaje);
                 await _context.SaveChangesAsync();
+                _context.Bitacoras.Add(new Bitacora
+                {
+                    IdMetodo = 3
+                   ,
+                    IdModulo = 1
+                   ,
+                    Cjson  = serializejson
+
+                }
+               );
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch
+                {
+
+                    return NotFound();
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -79,6 +115,27 @@ namespace ApiRestHoovers.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                try
+                {
+                    string serializejson = JsonSerializer.Serialize(viaje);
+                    _context.Bitacoras.Add(new Bitacora
+                    {
+                        IdMetodo = 2
+                          ,
+                        IdModulo = 3
+                          ,
+                        Cjson  = serializejson
+
+                    }
+                      );
+                    await _context.SaveChangesAsync();
+
+                }
+                catch
+                {
+                    throw;
+
+                }
             }
             catch (DbUpdateException)
             {
@@ -126,6 +183,29 @@ namespace ApiRestHoovers.Controllers
                 if (guardados.Count > 0)
                 {
                     _context.SaveChanges();
+
+                    try
+                    {
+                        string serializejson = JsonSerializer.Serialize(Viaje);
+                        _context.Bitacoras.Add(new Bitacora
+                        {
+                            IdMetodo = 2
+                              ,
+                            IdModulo = 3
+                              ,
+                            Cjson  = serializejson
+
+                        }
+                          );
+                        _context.SaveChanges();
+
+                    }
+                    catch
+                    {
+                        throw;
+
+                    }
+
                     return Ok(guardados);
                 }
                 else
@@ -151,7 +231,27 @@ namespace ApiRestHoovers.Controllers
 
             _context.Viajes.Remove(viaje);
             await _context.SaveChangesAsync();
+            try
+            {
+                string serializejson = JsonSerializer.Serialize(viaje);
+                _context.Bitacoras.Add(new Bitacora
+                {
+                    IdMetodo = 4
+                      ,
+                    IdModulo = 3
+                      ,
+                    Cjson  = serializejson
 
+                }
+                  );
+                await _context.SaveChangesAsync();
+
+            }
+            catch
+            {
+                throw;
+
+            }
             return NoContent();
         }
 

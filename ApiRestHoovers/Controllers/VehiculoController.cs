@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiRestHoovers.Models;
 using ApiRestHoovers.Services;
+using System.Text.Json;
 
 namespace ApiRestHoovers.Controllers
 {
@@ -26,8 +27,61 @@ namespace ApiRestHoovers.Controllers
         {
             var vehiculoService = new ClienteService();
             List<VehiculoResult> clientes = vehiculoService.GetVehiculos();
+            try
+            {
+                string serializejson = JsonSerializer.Serialize(clientes);
+                _context.Bitacoras.Add(new Bitacora
+                {
+                    IdMetodo = 1
+                      ,
+                    IdModulo = 1
+                      ,
+                    //CJSON vacio porque no se almacena ningun json, se dejo de esta forma por uso de OpenJson en consulta para reporte
+                    Cjson = "{}"
 
+                }
+                  );
+                _context.SaveChanges();
+
+            }
+            catch
+            {
+                throw;
+
+            }
             return Ok(clientes);
+        }
+
+
+        //Adicion de ID para reporteria
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Vehiculo>> GetVehiculo(int? id)
+        {
+            var vehiculo = await _context.Vehiculos.FindAsync(id)
+;
+
+            if (vehiculo == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+
+                string jsonString = JsonSerializer.Serialize(vehiculo);
+                _context.Bitacoras.Add(new Bitacora
+                {
+                    IdMetodo = 1,
+                    IdModulo = 2,
+                    Cjson = jsonString
+                });
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+
+            return vehiculo;
         }
 
         // PUT: api/Vehiculo/5
@@ -55,6 +109,27 @@ namespace ApiRestHoovers.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                string serializejson = JsonSerializer.Serialize(vehiculo);
+                _context.Bitacoras.Add(new Bitacora
+                {
+                    IdMetodo = 1
+                     ,
+                    IdModulo = 1
+                     ,
+                    Cjson  = serializejson
+
+                }
+                 );
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch
+                {
+
+                    return NotFound();
+                }
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -83,8 +158,19 @@ namespace ApiRestHoovers.Controllers
                 IdTipo = vehiculo.IdTipo
             });
             await _context.SaveChangesAsync();
+            string serializejson = JsonSerializer.Serialize(vehiculo);
+            _context.Bitacoras.Add(new Bitacora
+            {
+                IdMetodo = 2
+                     ,
+                IdModulo = 2
+                     ,
+                Cjson  = serializejson
 
-            return "Vehiculo creado exitosament";
+            }
+                 );
+            await _context.SaveChangesAsync();
+            return "Vehiculo creado exitosamente";
         }
 
         [HttpPost("Masivo")]
@@ -114,6 +200,28 @@ namespace ApiRestHoovers.Controllers
                 if (guardados.Count > 0)
                 {
                     _context.SaveChanges();
+
+                    try
+                    {
+                        string serializejson = JsonSerializer.Serialize(Usuario);
+                        _context.Bitacoras.Add(new Bitacora
+                        {
+                            IdMetodo = 2
+                              ,
+                            IdModulo = 2
+                              ,
+                            Cjson  = serializejson
+
+                        }
+                          );
+                        _context.SaveChanges();
+
+                    }
+                    catch
+                    {
+                        throw;
+
+                    }
                     return Ok(guardados);
                 }
                 else
@@ -139,7 +247,27 @@ namespace ApiRestHoovers.Controllers
 
             _context.Vehiculos.Remove(vehiculo);
             await _context.SaveChangesAsync();
+            try
+            {
+                string serializejson = JsonSerializer.Serialize(vehiculo);
+                _context.Bitacoras.Add(new Bitacora
+                {
+                    IdMetodo = 4
+                      ,
+                    IdModulo = 1
+                      ,
+                    Cjson  = serializejson
 
+                }
+                  );
+                await _context.SaveChangesAsync();
+
+            }
+            catch
+            {
+                throw;
+
+            }
             return NoContent();
         }
 

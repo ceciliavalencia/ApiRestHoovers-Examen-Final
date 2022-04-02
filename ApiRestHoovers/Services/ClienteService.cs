@@ -114,6 +114,24 @@ namespace ApiRestHoovers.Services
             _Conn.Close();
             return result;
         }
+        #region Examen 
+        public List<TopMarcas> GetMarcas()
+        {
+            _Conn = SqlService.GetSqlConnection();
+            _Conn.Open();
+            List<TopMarcas> result = _Conn.Query<TopMarcas>("select TOP 10  Marca, linea, count(1) as 'Total_C' from bitacora as b CROSS APPLY OPENJSON(b.cjson) WITH ( id INT 'strict $.Id', marca NVARCHAR(50) '$.Nombre' , linea NVARCHAR(50) '$.Descripcion' , tipo INT '$.IdTipo', modelo INT '$.Modelo' ) inner join vehiculo as v on linea=v.DESCRIPCION  WHERE marca <> '' GROUP BY  marca, linea ORDER BY Total_C DESC").ToList();
+            _Conn.Close();
+            return result;
+        }
+        public List<DetalleVehiculos> GetDetailVehiculo()
+        {
+            _Conn = SqlService.GetSqlConnection();
+            _Conn.Open();
+            List<DetalleVehiculos> result = _Conn.Query<DetalleVehiculos>("select marca, linea, tv.DESCRIPCION as Tipo, modelov, count(1) as 'Total_C' from bitacora as b CROSS APPLY OPENJSON(b.cjson)  WITH ( id INT 'strict $.Id' , marca NVARCHAR(50) '$.Nombre' , linea NVARCHAR(50) '$.Descripcion'  , tipo INT '$.IdTipo' , modelov INT '$.Modelo') inner join TIPO_VEHICULO as tv on tipo =tv.ID  WHERE marca <> '' GROUP BY  marca, linea, tv.DESCRIPCION, modelov ORDER BY Total_C DESC").ToList();
+            _Conn.Close();
+            return result;
+        }
 
+        #endregion  
     }
 }

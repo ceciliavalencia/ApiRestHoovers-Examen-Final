@@ -30,14 +30,15 @@ namespace ApiRestHoovers.Controllers
             List<ClienteResult> clientes = clienteService.GetClientes();
             try
             {
-                string serializejson = JsonSerializer.Serialize(clientes);
+                
                 _context.Bitacoras.Add(new Bitacora
                 {
                     IdMetodo = 1
                       ,
                     IdModulo = 1
                       ,
-                    Json = "El usuario consulto la tabla de clientes"
+                    //CJSON vacio porque no se almacena ningun json, se dejo de esta forma por uso de OpenJson en consulta para reporte
+                   Cjson  = "{}"
 
                 }
                   ) ;
@@ -77,7 +78,7 @@ namespace ApiRestHoovers.Controllers
             
             try
             {
-                string serializejson = JsonSerializer.Serialize(cliente);
+                string serializeCjson  = JsonSerializer.Serialize(cliente);
                 await _context.SaveChangesAsync();
                 _context.Bitacoras.Add(new Bitacora
                 {
@@ -85,7 +86,7 @@ namespace ApiRestHoovers.Controllers
                     ,
                     IdModulo = 1
                     ,
-                    Json = serializejson
+                    Cjson  = serializeCjson
 
                 }
                 );
@@ -132,14 +133,14 @@ namespace ApiRestHoovers.Controllers
             await _context.SaveChangesAsync();
             try
             {
-                string serializejson = JsonSerializer.Serialize(cliente);
+                string serializeCjson  = JsonSerializer.Serialize(cliente);
                 _context.Bitacoras.Add(new Bitacora
                 {
                     IdMetodo = 2
                       ,
                     IdModulo = 1
                       ,
-                    Json = serializejson
+                    Cjson  = serializeCjson
 
                 }
                   );
@@ -153,8 +154,6 @@ namespace ApiRestHoovers.Controllers
             }
             return "Cliente creado exitosamente";
 
-          
-           
 
         }
 
@@ -187,14 +186,14 @@ namespace ApiRestHoovers.Controllers
 
                     try
                     {
-                        string serializejson = JsonSerializer.Serialize(Usuario);
+                        string serializeCjson  = JsonSerializer.Serialize(Usuario);
                         _context.Bitacoras.Add(new Bitacora
                         {
                             IdMetodo = 2
                               ,
                             IdModulo = 1
                               ,
-                            Json = serializejson
+                            Cjson  = serializeCjson
 
                         }
                           );
@@ -234,14 +233,14 @@ namespace ApiRestHoovers.Controllers
             await _context.SaveChangesAsync();
             try
             {
-                string serializejson = JsonSerializer.Serialize(cliente);
+                string serializeCjson  = JsonSerializer.Serialize(cliente);
                 _context.Bitacoras.Add(new Bitacora
                 {
                     IdMetodo = 4
                       ,
                     IdModulo = 1
                       ,
-                    Json = serializejson
+                    Cjson  = serializeCjson
 
                 }
                   );

@@ -10,7 +10,7 @@ namespace ApiRestHoovers.Services
     {
         public static SqlConnection GetSqlConnection()
         {
-            return new SqlConnection(@"Data Source=.;Initial Catalog=HOOVERS; Integrated Security=True; Pooling=False");
+            return new SqlConnection(@"Data Source=DESKTOP-TM0P2M4\SQLEXPRESS;Initial Catalog=HOOVERS; Integrated Security=True; Pooling=False");
         }
     }
 }

@@ -45,6 +45,10 @@ namespace ApiRestHoovers.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.Cjson)
+                    .IsUnicode(false)
+                    .HasColumnName("CJSON");
+
                 entity.Property(e => e.FechaRegistro)
                     .HasColumnType("datetime")
                     .HasColumnName("FECHA_REGISTRO")
@@ -53,10 +57,6 @@ namespace ApiRestHoovers.Models
                 entity.Property(e => e.IdMetodo).HasColumnName("ID_METODO");
 
                 entity.Property(e => e.IdModulo).HasColumnName("ID_MODULO");
-
-                entity.Property(e => e.Json)
-                    .IsUnicode(false)
-                    .HasColumnName("JSON");
 
                 entity.Property(e => e.Usuario)
                     .HasMaxLength(50)

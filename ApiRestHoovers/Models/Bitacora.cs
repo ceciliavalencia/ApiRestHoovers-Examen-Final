@@ -10,7 +10,7 @@ namespace ApiRestHoovers.Models
         public int Id { get; set; }
         public int? IdModulo { get; set; }
         public int? IdMetodo { get; set; }
-        public string Json { get; set; }
+        public string Cjson { get; set; }
         public DateTime? FechaRegistro { get; set; }
         public string Usuario { get; set; }
 
